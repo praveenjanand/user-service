@@ -5,6 +5,7 @@ import java.util.Date;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.group5.dto.GetMoviesRequest;
 import com.group5.dto.Session;
 import com.group5.dto.User;
 import com.group5.repo.SessionRepository;
@@ -52,6 +53,12 @@ public class UserService {
             }
         return null; // Login failed
     }
+
+	public boolean validateToken(GetMoviesRequest tokenObj) {
+        Session session = sessionRepository.findByUsername(tokenObj.getUserName());
+        return session.getToken().equalsIgnoreCase(tokenObj.getToken());
+
+	}
 
 
 }
