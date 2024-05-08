@@ -5,7 +5,7 @@ metadata:
   labels:
     app: user-service-deployment
 spec:
-  replicas: 3
+  replicas: 1
   selector:
     matchLabels:
       app: user-service-deployment
@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: user-service-deployment
-        image: giridharaguptha/ticket-booking-user-service:latest
+        image: giridharaguptha/ticket-booking-user-service:1.0.0
         ports:
         - containerPort: 8080
 ---
