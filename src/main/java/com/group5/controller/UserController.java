@@ -1,5 +1,7 @@
 package com.group5.controller;
 
+import java.security.GeneralSecurityException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,7 +27,12 @@ public class UserController {
 	 	@CrossOrigin(origins = "*")
 	    @PostMapping("/register")
 	    public ResponseEntity<String> registerUser(@RequestBody User user) {
-	        String registeredUser = userService.registerUser(user);
+	        String registeredUser = "";
+			try {
+				registeredUser = userService.registerUser(user);
+			} catch (GeneralSecurityException e) {
+				e.printStackTrace();
+			}
 	        return ResponseEntity.ok(registeredUser);
 	    }
 	    
@@ -33,7 +40,12 @@ public class UserController {
 	    @PostMapping("/login")
 	    public ResponseEntity<Object> loginUser(@RequestBody LoginRequest loginRequest) {
 	        System.out.println("Inside Login in controller" + loginRequest.getPassword() + loginRequest.getUsername());
-	        String token = userService.login(loginRequest.getUsername(), loginRequest.getPassword());
+	        String token="";
+			try {
+				token = userService.login(loginRequest.getUsername(), loginRequest.getPassword());
+			} catch (GeneralSecurityException e) {
+				e.printStackTrace();
+			}
 	        if (token != null) {
 	            return ResponseEntity.ok().body(new LoginResponse(token));
 	        } else {

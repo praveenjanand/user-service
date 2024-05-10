@@ -1,5 +1,6 @@
 package com.group5.service;
 
+import java.security.GeneralSecurityException;
 import java.util.Date;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +11,7 @@ import com.group5.dto.Session;
 import com.group5.dto.User;
 import com.group5.repo.SessionRepository;
 import com.group5.repo.UserRepository;
+import com.group5.util.Base64EncodingUtil;
 import com.group5.util.JwtUtil;
 
 import io.jsonwebtoken.Claims;
@@ -26,8 +28,8 @@ public class UserService {
 	SessionRepository sessionRepository;
 
 
-    public String registerUser(User user) {
-        user.setPassword(user.getPassword()); 
+    public String registerUser(User user) throws GeneralSecurityException {
+        user.setPassword(Base64EncodingUtil.encrypt(user.getPassword())); 
         userRepository.save(user);
         return "Registration Successful. Welcome "+user.getUsername();
     }
@@ -36,11 +38,12 @@ public class UserService {
         return userRepository.findByUsername(username);
     }
 
-    public String login(String username, String password) {
+    public String login(String username, String password) throws GeneralSecurityException {
         System.out.println("Inside Login in service");
         User user = userRepository.findByUsername(username);
         System.out.println("User retrieved from MongoDB"+user);
-            if (user != null && user.getPassword().equals(password)) {
+        String encryptedPassword = Base64EncodingUtil.decrypt(user.getPassword());
+            if (user != null && password.equals(encryptedPassword)) {
             	String token = JwtUtil.generateJwtToken(username);
             	Session sessionObj = sessionRepository.findByUsername(username);
             	if(null!=sessionObj) {
